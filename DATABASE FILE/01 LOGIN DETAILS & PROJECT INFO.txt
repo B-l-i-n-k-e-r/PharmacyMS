@@ -1,0 +1,22 @@
+**Database Name: pharmacyms**
+
+**Admin Login Details**
+
+Username: admin
+Password: admin
+
+
+**Manager Login Details**
+
+Username: manager
+Password: password
+
+**Pharmacist Login Details**
+
+Username: pharmacist
+Password: password
+
+**Cashier Login Details**
+
+Username: cashier
+Password: password
