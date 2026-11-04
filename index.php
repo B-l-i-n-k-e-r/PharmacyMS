@@ -98,7 +98,7 @@ $roles = ['Admin', 'Manager', 'Pharmacist', 'Cashier'];
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sign in | Pharmacy Management System</title>
+<title>Sign in | MedFlow PharmacyMS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -305,7 +305,7 @@ body {
       <span class="pill pill--one" aria-hidden="true"></span>
       <span class="pill pill--two" aria-hidden="true"></span>
       <span class="pill pill--three" aria-hidden="true"></span>
-      <h1>Pharmacy Management System</h1>
+      <h1>MedFlow PharmacyMS</h1>
       <p>Manage stock, prescriptions and sales in one place.</p>
     </section>
 

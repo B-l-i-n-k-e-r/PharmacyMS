@@ -2,23 +2,28 @@
 session_start();
 include_once('connect_db.php');
 
-if(isset($_SESSION['username'])){
-    $id=$_SESSION['pharmacist_id'];
-    $fname=$_SESSION['first_name'];
-    $lname=$_SESSION['last_name'];
-    $sid=$_SESSION['staff_id'];
-    $user=$_SESSION['username'];
-}else{
-    header("location:http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/index.php");
+date_default_timezone_set('Africa/Nairobi'); // keeps the greeting and date correct
+
+if (isset($_SESSION['username'])) {
+    $id    = $_SESSION['pharmacist_id'];
+    $fname = $_SESSION['first_name'];
+    $lname = $_SESSION['last_name'];
+    $sid   = $_SESSION['staff_id'];
+    $user  = $_SESSION['username'];
+} else {
+    header("location:index.php");
     exit();
 }
+
+$hour     = (int) date('G');
+$greeting = ($hour < 12) ? 'Good morning' : (($hour < 17) ? 'Good afternoon' : 'Good evening');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?php echo htmlspecialchars($user); ?> - Pharmacy Management System</title>
+<title><?php echo htmlspecialchars($user); ?> - MedFlow PMS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -85,7 +90,15 @@ a { color: inherit; text-decoration: none; }
 }
 .brand-name { font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
 
-.nav { list-style: none; margin: 16px 0 0; padding: 0; flex: 1; }
+.nav-label {
+  margin: 20px 12px 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #7fa59b;
+}
+.nav { list-style: none; margin: 8px 0 0; padding: 0; flex: 1; }
 .nav li + li { margin-top: 2px; }
 .nav a {
   display: flex;
@@ -124,7 +137,8 @@ a { color: inherit; text-decoration: none; }
   justify-content: space-between;
   gap: 16px;
   padding: 14px 40px;
-  background: var(--paper);
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
 }
 .topbar-title { font-weight: 600; }
@@ -156,56 +170,130 @@ a { color: inherit; text-decoration: none; }
 .main {
   margin-left: var(--sidebar);
   padding: 40px;
-  max-width: 1100px;
+  max-width: 1200px;
 }
-.main h1 {
-  margin: 0 0 6px;
-  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-.main .lead { margin: 0 0 36px; color: var(--ink-soft); }
 
-.group + .group { margin-top: 36px; }
-.group h2 {
-  margin: 0 0 14px;
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 34px 38px;
+  margin-bottom: 32px;
+  color: #fff;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--pine) 0%, #1f6154 100%);
+}
+.hero::before, .hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+}
+.hero::before { width: 260px; height: 260px; right: -70px; top: -90px; }
+.hero::after  { width: 160px; height: 160px; right: 140px; bottom: -90px; background: rgba(242,181,68,.14); }
+.hero > * { position: relative; z-index: 1; }
+.hero-date { font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9fc2b8; margin-bottom: 8px; }
+.hero h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 2.6vw, 2.1rem); line-height: 1.15; letter-spacing: -0.02em; color: #fff; }
+.hero p { margin: 0; color: #c4d8d2; max-width: 46ch; }
+.hero-meta {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; border-radius: 14px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  font-size: .9rem; color: #e4f0ec;
+}
+.hero-meta i { color: var(--amber); }
+.hero-meta strong { color: #fff; }
+
+/* ---------- Sections ---------- */
+.section-title {
+  margin: 0 0 16px;
   font-size: 1.05rem;
   font-weight: 600;
 }
+.section + .section { margin-top: 36px; }
 
-.tiles {
+/* ---------- Action cards ---------- */
+.actions {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
 }
-
-.tile {
+.action {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 22px;
+  gap: 18px;
+  padding: 26px;
   background: var(--paper);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  transition: border-color .15s, background-color .15s;
+  border-radius: 18px;
+  transition: transform .18s, box-shadow .18s, border-color .18s;
 }
-.tile:hover { border-color: var(--pine); }
-
-.tile-icon {
+.action:hover {
+  transform: translateY(-4px);
+  border-color: var(--pine);
+  box-shadow: 0 14px 30px rgba(18,59,54,.12);
+}
+.action-icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--mist);
-  color: var(--pine);
-  font-size: 1.15rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  font-size: 1.35rem;
 }
-.tile--amber .tile-icon { background: #fbebc8; color: #7a5200; }
-.tile--pine  .tile-icon { background: var(--pine); color: #fff; }
+.action--amber .action-icon { background: #fbebc8; color: #7a5200; }
+.action--pine  .action-icon { background: var(--pine); color: #fff; }
+.action h3 { margin: 0 0 6px; font-size: 1.2rem; }
+.action p { margin: 0; color: var(--ink-soft); font-size: .95rem; }
+.action-go {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: .92rem;
+  color: var(--pine);
+}
+.action-go i { transition: transform .18s; }
+.action:hover .action-go i { transform: translateX(5px); }
 
-.tile h3 { margin: 0; font-size: 1.1rem; }
-.tile p { margin: 4px 0 0; color: var(--ink-soft); font-size: 0.95rem; }
+/* ---------- Checklist ---------- */
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 26px;
+}
+.panel-sub { margin: -8px 0 18px; color: var(--ink-soft); font-size: .88rem; }
+.checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--mist);
+  transition: background-color .15s;
+}
+.check:hover { background: #e2ece8; }
+.check-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--pine);
+}
+.check h4 { margin: 0 0 2px; font-size: .98rem; }
+.check p { margin: 0; color: var(--ink-soft); font-size: .86rem; }
 
 /* ---------- Small screens ---------- */
 .scrim { display: none; }
@@ -222,11 +310,13 @@ a { color: inherit; text-decoration: none; }
   }
   .topbar { margin-left: 0; padding: 12px 20px; }
   .menu-btn { display: inline-flex; }
-  .main { margin-left: 0; padding: 28px 20px 48px; }
+  .main { margin-left: 0; padding: 24px 20px 48px; }
+  .hero { padding: 26px 22px; border-radius: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sidebar { transition: none; }
+  .sidebar, .action, .action-go i { transition: none; }
+  .action:hover { transform: none; }
 }
 </style>
 </head>
@@ -236,14 +326,20 @@ a { color: inherit; text-decoration: none; }
   <aside class="sidebar" id="sidebar" aria-label="Main navigation">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true"></span>
-      <span class="brand-name">Pharmacy<br>Management</span>
+      <span class="brand-name">MedFlow<br>PMS</span>
     </div>
 
     <ul class="nav">
       <li><a href="pharmacist.php" aria-current="page"><i class="fas fa-home"></i>Dashboard</a></li>
+    </ul>
+
+    <div class="nav-label">Pharmacy</div>
+    <ul class="nav" style="margin-top: 0; flex: 0;">
       <li><a href="prescription.php"><i class="fas fa-prescription-bottle-alt"></i>Prescription</a></li>
       <li><a href="stock_pharmacist.php"><i class="fas fa-pills"></i>Stock</a></li>
     </ul>
+
+    <div style="flex: 1;"></div>
 
     <div class="sidebar-foot">
       <a href="logout.php"><i class="fas fa-power-off"></i>Log out</a>
@@ -263,34 +359,75 @@ a { color: inherit; text-decoration: none; }
   </header>
 
   <main class="main">
-    <h1>Welcome back, <?php echo htmlspecialchars($fname); ?></h1>
-    <p class="lead">Manage your prescriptions and keep an eye on your stock levels.</p>
 
-    <section class="group">
-      <h2>Daily Tasks</h2>
-      <div class="tiles">
-        <a href="prescription.php" class="tile tile--amber">
-          <span class="tile-icon"><i class="fas fa-prescription-bottle-alt"></i></span>
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <div class="hero-date"><?php echo date('l, j F Y'); ?></div>
+        <h1><?php echo $greeting; ?>, <?php echo htmlspecialchars($fname); ?></h1>
+        <p>Manage your prescriptions and keep an eye on your stock levels.</p>
+      </div>
+      <div class="hero-meta">
+        <i class="fas fa-id-badge"></i>
+        <span>Staff ID <strong><?php echo htmlspecialchars((string) $sid); ?></strong></span>
+      </div>
+    </section>
+
+    <!-- MAIN ACTIONS -->
+    <section class="section">
+      <h2 class="section-title">Where would you like to go?</h2>
+      <div class="actions">
+        <a href="prescription.php" class="action action--amber">
+          <span class="action-icon"><i class="fas fa-prescription-bottle-alt"></i></span>
           <div>
             <h3>Prescriptions</h3>
             <p>Process new prescriptions and view patient history.</p>
           </div>
+          <span class="action-go">Open prescriptions <i class="fas fa-arrow-right"></i></span>
         </a>
-      </div>
-    </section>
 
-    <section class="group">
-      <h2>Inventory</h2>
-      <div class="tiles">
-        <a href="stock_pharmacist.php" class="tile tile--pine">
-          <span class="tile-icon"><i class="fas fa-pills"></i></span>
+        <a href="stock_pharmacist.php" class="action action--pine">
+          <span class="action-icon"><i class="fas fa-pills"></i></span>
           <div>
             <h3>Manage Stock</h3>
             <p>Check available medicines, update quantities, and track expiry.</p>
           </div>
+          <span class="action-go">Open stock <i class="fas fa-arrow-right"></i></span>
         </a>
       </div>
     </section>
+
+    <!-- DAILY CHECKLIST -->
+    <section class="section">
+      <div class="panel">
+        <h2 class="section-title">Daily Checklist</h2>
+        <p class="panel-sub">Quick reminders to keep the pharmacy running smoothly.</p>
+        <div class="checks">
+          <a href="prescription.php" class="check">
+            <span class="check-icon"><i class="fas fa-clipboard-check"></i></span>
+            <div>
+              <h4>Review pending prescriptions</h4>
+              <p>Process anything waiting from the doctors.</p>
+            </div>
+          </a>
+          <a href="stock_pharmacist.php" class="check">
+            <span class="check-icon"><i class="fas fa-box-open"></i></span>
+            <div>
+              <h4>Check low stock</h4>
+              <p>Spot medicines running low before they run out.</p>
+            </div>
+          </a>
+          <a href="stock_pharmacist.php" class="check">
+            <span class="check-icon"><i class="fas fa-calendar-times"></i></span>
+            <div>
+              <h4>Track expiry dates</h4>
+              <p>Remove or flag medicines close to expiry.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
 </div>

@@ -1,162 +1,197 @@
 <?php
-require_once('tcpdf/config/lang/eng.php');
-require_once('tcpdf/tcpdf.php');
-include('connect_db.php');
 session_start();
-		$invoice_no=$_SESSION['invoice_no'];
-		$amount=$_SESSION['amount'];
-		$payType=$_SESSION['payType'];
-		$serial_no=$_SESSION['serial_no'];
-if(isset($_POST['tuma']))
-{
-	$invNo=$_POST['invoice_no'];
-	$receipt=$_POST['receipt_no'];
-	$amount=$_POST['amount'];
-	$pType=$_POST['payment_type'];
-	$serial=$_POST['serial_number'];
-$t=time("r");
-$user=$_SESSION['username'];
-$time=date("l\, F d Y\, h:i:s A", $t);
-$invoiceNo=$_SESSION['invoice'];
-$c_id=$_SESSION['custId'];
-$cname=$_SESSION['custName'];
-$recNo=$_SESSION['recNo'];
+include_once('connect_db.php');
+
+if (!isset($_SESSION['username'])) {
+    header("location:index.php");
+    exit();
 }
-else
-{header('Location: payment.php');
-exit;}
+$user  = $_SESSION['username'];
+$fname = $_SESSION['first_name'];
 
-$getCid=mysql_query("SELECT customer_id FROM prescription WHERE invoice_id='{$invNo}' ");
-$getName=mysql_query("SELECT customer_name FROM invoice WHERE invoice_id='{$invNo}' ");
-$details1=mysql_fetch_array($getName); 
-$details=mysql_fetch_array($getCid);
+$message1 = '';
+$currency = 'KES'; // change if you prefer another symbol
 
-	
-	$sqlP=mysql_query("INSERT INTO receipts(reciptNo,customer_id,total,payType,serialno,served_by)
-				VALUES('{$recNo}','{$details['customer_id']}','{$amount}','{$pType}','{$serial}','{$_SESSION['username']}')  ");
+// Receipt number from the URL
+$receipt_no = isset($_GET['receipt']) ? trim($_GET['receipt']) : '';
 
+$receiptData = null;
 
-
-
-class MYPDF extends TCPDF {
-
-	// Load table data from file
-	public function LoadData($file) {
-		// Read file lines
-		$lines = file($file);
-		$data = array();
-		foreach($lines as $line) {
-			$data[] = explode(';', chop($line));
-		}
-		return $data;
-	}
-
-	// Colored table
-	public function ColoredTable($header,$data) {
-		// Colors, line width and bold font
-		$this->SetFillColor(255, 255, 255);
-		$this->SetTextColor(0);
-		$this->SetDrawColor(255, 255,255);
-		$this->SetLineWidth(0);
-		$this->SetFont('', 'B');
-		// Header
-		//$w = array(30,15,9,15,);
-		$w = array(40,10,20,20);
-		$num_headers = count($header);
-		for($i = 0; $i < $num_headers; ++$i) {
-			$this->Cell($w[$i], 5, $header[$i], 1, 0, 'L', 'R');
-		}
-		$this->Ln();
-		// Color and font restoration
-		$this->SetFillColor(255, 255, 255);
-		$this->SetTextColor(0);
-		$this->SetFont('');
-		// Data
-		$fill = 0;
-	
-		foreach($data as $row) {
-			$this->Cell($w[0], 4, $row[0], 'LR', 0, 'L', $fill);
-			$this->Cell($w[1], 4, number_format($row[1],2), 'LR', 0, 'R', $fill);
-			$this->Cell($w[2], 4, $row[2], 'LR', 0, 'L', $fill);
-			$this->Cell($w[3], 4, number_format($row[3],2), 'LR', 0, 'R', $fill);
-			$this->Ln();
-			$fill=!$fill;
-		}
-		$this->Cell(array_sum($w), 0, '', 'T');
-	}
-	
+if ($receipt_no !== '' && ctype_digit($receipt_no)) {
+    try {
+        $stmt = $con->prepare("SELECT * FROM receipts WHERE reciptNo = :rno LIMIT 1");
+        $stmt->execute([':rno' => (int) $receipt_no]);
+        $receiptData = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Receipt load failed: " . $e->getMessage());
+        $message1 = "Could not load the receipt. Please try again.";
+    }
 }
 
+if (!$receiptData && $message1 === '') {
+    $message1 = "Receipt not found.";
+}
 
-$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_INVOICE_FORMAT, true, 'UTF-8', false);
+// Pre-compute amounts for display
+if ($receiptData) {
+    $total    = (float) $receiptData['total'];
+    $discount = (float) ($receiptData['discount'] ?? 0);
+    $subtotal = $total + $discount;
+    $tendered = $receiptData['tendered'];
+    $change   = (float) ($receiptData['change_due'] ?? 0);
+}
 
+$page_title   = "Receipt - Pharmacy";
+$topbar_title = "Cashier Dashboard";
 
-$pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('Pharm Sys');
-$pdf->SetTitle('Receipt');
-$pdf->SetSubject('Payment');
-$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
-
-//$pdf->SetHeaderData(PDF_RECEIPT_LOGO, PDF_RECEIPT_LOGO_WIDTH, PDF_RECEIPT_TITLE, PDF_HEADER_STRING, array(0,0,0), array(0,0,0));
-//$pdf->setHeaderFont(Array(PDF_FONT_NAME_RECEIPT, '', PDF_FONT_SIZE_RECEIPT));
-//$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-
-$pdf->setPrintHeader(false);
-$pdf->setPrintFooter(false);
-
-$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-
-$pdf->SetMargins(PDF_INVOICE_LEFT, PDF_INVOICE_TOP, PDF_INVOICE_RIGHT);
-$pdf->SetHeaderMargin(PDF_INVOICE_HEADER);
-$pdf->SetFooterMargin(PDF_INVOICE_FOOTER);
-
-
-$pdf->SetAutoPageBreak(TRUE, PDF_INVOICE_BOTTOM);
-
-
-$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
-
-$pdf->setLanguageArray($l);
-
-
-$pdf->SetFont('times', '', 10, '', true);
-
-$pdf->AddPage();
-$spacing = -0.01;
-$stretching = 75;
-$pdf->setFontStretching($stretching);
-				$pdf->setFontSpacing($spacing);
-$titling= <<<EOD
-<strong> <font style="font-size:11">Pharmacy Management System</font> </strong> <br> <strong>Invoice Receipt</strong><br>
-Cardiinnal Health Inc,<br> Fullerton, US <br> Tel: +777 696 000 112 <br> E-mail: pharmacysystem@gmail.com 
-<br>-----------------------------------------
-EOD;
-$header = array('Drug','Price.', 'Qtty' ,'Cost(Kshs.)');
-$ddt=<<<EOD
-$time   
-EOD;
-$html = <<<EOD
-<br>-----------------------------------------
-EOD;
-
-
-$data = $pdf->LoadData('receipts/docs/'.$recNo.'.txt');
-$pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $titling, $border=0, $ln=1, $fill=0, $reseth=true, $align='C', $autopadding=true);
-$pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $ddt, $border=0, $ln=1, $fill=0, $reseth=true, $align='L', $autopadding=true);
-$pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='', $autopadding=true);
-
-$pdf->ColoredTable($header, $data);
-
-$pdf->SetY(-10);
-		
-		$pdf->Cell(0, 0, 'You were served by: '.strtoupper($user), 0, false, 'L', 0, '', 0, false, 'T', 'M');
-
-$pdf->Output('receipts/printouts/'.$details1['customer_name'].'-receipt.pdf','F');
-unlink('receipts/docs/'.$recNo.'.txt');
-unset($_SESSION['custId'], $_SESSION['custName'], $_SESSION['age'], $_SESSION['sex'], $_SESSION['postal_address'], $_SESSION['phone']);
-header('Location: receipts/printouts/'.$details1['customer_name'].'-receipt.pdf');
-exit;
-
+include 'includes/head.php';
 ?>
+
+<!-- PRINT STYLES -->
+<style>
+@media print {
+  @page { margin: 10mm; }
+  body * { visibility: hidden; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area { position: absolute; left: 0; top: 0; width: 100%; }
+  .sidebar, .topbar, .btn, .menu-btn, .scrim, .no-print { display: none !important; }
+  .card { border: none; box-shadow: none; }
+}
+.rcpt-row { display: flex; justify-content: space-between; margin-bottom: 8px; gap: 16px; }
+.rcpt-row span { color: var(--ink-soft); }
+.rcpt-row strong { text-align: right; }
+</style>
+
+<?php
+include 'includes/sidebar_cashier.php';
+include 'includes/header.php';
+?>
+
+<main class="main">
+    <div class="no-print" style="margin-bottom: 20px;">
+        <a href="payment.php" style="color: var(--ink-soft); font-weight: 600;"><i class="fas fa-arrow-left"></i> Back to POS</a>
+    </div>
+
+    <?php if ($message1 !== ''): ?>
+      <div class="alert alert--error" role="alert"><?php echo htmlspecialchars($message1); ?></div>
+    <?php endif; ?>
+
+    <?php if ($receiptData): ?>
+
+    <div class="print-area" style="max-width: 500px; margin: 0 auto;">
+        <div class="card" style="padding: 40px; text-align: center;">
+            <div class="brand-mark" style="margin: 0 auto 20px; transform: rotate(0);"></div>
+            <h1 style="margin: 0; font-size: 1.5rem;">Pharmacy Management</h1>
+            <p style="color: var(--ink-soft); margin: 4px 0 24px;">Official Payment Receipt</p>
+
+            <!-- Receipt info -->
+            <div style="border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line); padding: 20px 0; margin-bottom: 24px; text-align: left;">
+                <div class="rcpt-row">
+                    <span>Receipt No:</span>
+                    <strong>#<?php echo htmlspecialchars($receiptData['reciptNo']); ?></strong>
+                </div>
+                <?php if (!empty($receiptData['customer_id'])): ?>
+                <div class="rcpt-row">
+                    <span>Invoice / Rx No:</span>
+                    <strong><?php echo htmlspecialchars($receiptData['customer_id']); ?></strong>
+                </div>
+                <?php endif; ?>
+                <div class="rcpt-row">
+                    <span>Date:</span>
+                    <strong><?php echo date('M j, Y - g:i A', strtotime($receiptData['date'])); ?></strong>
+                </div>
+                <div class="rcpt-row" style="margin-bottom: 0;">
+                    <span>Served By:</span>
+                    <strong><?php echo htmlspecialchars($receiptData['served_by']); ?></strong>
+                </div>
+            </div>
+
+            <!-- Customer -->
+            <?php if (!empty($receiptData['customer_name']) || !empty($receiptData['customer_phone'])): ?>
+            <div style="text-align: left; margin-bottom: 24px;">
+                <?php if (!empty($receiptData['customer_name'])): ?>
+                <div class="rcpt-row">
+                    <span>Customer:</span>
+                    <strong><?php echo htmlspecialchars($receiptData['customer_name']); ?></strong>
+                </div>
+                <?php endif; ?>
+                <?php if (!empty($receiptData['customer_phone'])): ?>
+                <div class="rcpt-row" style="margin-bottom: 0;">
+                    <span>Phone:</span>
+                    <strong><?php echo htmlspecialchars($receiptData['customer_phone']); ?></strong>
+                </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
+            <!-- Payment method -->
+            <div style="text-align: left; margin-bottom: 24px;">
+                <div class="rcpt-row">
+                    <span>Payment Method:</span>
+                    <strong><?php echo htmlspecialchars($receiptData['payType']); ?></strong>
+                </div>
+                <?php if (!empty($receiptData['serialno'])): ?>
+                <div class="rcpt-row" style="margin-bottom: 0;">
+                    <span>Serial No:</span>
+                    <strong><?php echo htmlspecialchars($receiptData['serialno']); ?></strong>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Amounts -->
+            <div style="text-align: left; margin-bottom: 16px;">
+                <?php if ($discount > 0): ?>
+                <div class="rcpt-row">
+                    <span>Subtotal:</span>
+                    <strong><?php echo htmlspecialchars($currency); ?> <?php echo number_format($subtotal, 2); ?></strong>
+                </div>
+                <div class="rcpt-row">
+                    <span>Discount:</span>
+                    <strong>- <?php echo htmlspecialchars($currency); ?> <?php echo number_format($discount, 2); ?></strong>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <div style="background: var(--mist); padding: 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span style="font-weight: 600; color: var(--ink-soft);">Total Paid</span>
+                <span style="font-size: 1.8rem; font-weight: 700; color: var(--pine);">
+                    <?php echo htmlspecialchars($currency); ?> <?php echo number_format($total, 2); ?>
+                </span>
+            </div>
+
+            <?php if ($tendered !== null && $change > 0): ?>
+            <div style="text-align: left; margin-bottom: 24px;">
+                <div class="rcpt-row">
+                    <span>Amount Received:</span>
+                    <strong><?php echo htmlspecialchars($currency); ?> <?php echo number_format((float) $tendered, 2); ?></strong>
+                </div>
+                <div class="rcpt-row" style="margin-bottom: 0;">
+                    <span>Change:</span>
+                    <strong><?php echo htmlspecialchars($currency); ?> <?php echo number_format($change, 2); ?></strong>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- Notes -->
+            <?php if (!empty($receiptData['notes'])): ?>
+            <div style="text-align: left; margin-bottom: 24px; padding-top: 16px; border-top: 1px dashed var(--line);">
+                <span style="color: var(--ink-soft); font-size: 0.85rem;">Notes</span>
+                <p style="margin: 4px 0 0;"><?php echo nl2br(htmlspecialchars($receiptData['notes'])); ?></p>
+            </div>
+            <?php endif; ?>
+
+            <p style="font-size: 0.85rem; color: var(--ink-soft); margin-top: 24px;">Thank you for your business!</p>
+        </div>
+
+        <div class="no-print" style="display: flex; gap: 12px; margin-top: 24px;">
+            <button type="button" onclick="window.print()" class="btn" style="flex: 1;">
+                <i class="fas fa-print"></i> Print Receipt
+            </button>
+            <a href="payment.php" class="btn btn--ghost" style="flex: 1;">New Sale</a>
+        </div>
+    </div>
+
+    <?php endif; ?>
+</main>
+
+<?php include 'includes/footer.php'; ?>
