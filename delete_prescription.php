@@ -1,18 +1,25 @@
 <?php
 session_start();
 include_once('connect_db.php');
-if(isset($_SESSION['username'])){
-$id=$_SESSION['pharmacist_id'];
-$user=$_SESSION['username'];
-}else{
-header("location:http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/index.php");
-exit();
+
+if(!isset($_SESSION['username'])){
+    header("location:index.php");
+    exit();
 }
-$id=$_GET[prescription_id];
-$sql="delete from prescription where prescription_id='$id'";
-mysql_query($sql);
-//$rows=mysql_fetch_assoc($result);
-header("location:prescription.php");
+
+if(isset($_GET['prescription_id']) && is_numeric($_GET['prescription_id'])) {
+    $id = $_GET['prescription_id'];
+    try {
+        $stmt = $con->prepare("DELETE FROM prescription WHERE prescription_id = :id");
+        $stmt->execute([':id' => $id]);
+        
+        header("Location: prescription.php");
+        exit();
+    } catch (PDOException $e) {
+        die("Error deleting prescription: " . htmlspecialchars($e->getMessage()));
+    }
+} else {
+    header("location:index.php");
+    exit();
+}
 ?>
-
-

@@ -1,18 +1,27 @@
 <?php
 session_start();
 include_once('connect_db.php');
-if(isset($_SESSION['username'])){
-$id=$_SESSION['admin_id'];
-$user=$_SESSION['username'];
-}else{
-header("location:http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/index.php");
-exit();
+
+if(!isset($_SESSION['username'])){
+    header("location:index.php");
+    exit();
 }
-$id=$_GET[stock_id];
-$sql="delete from stock where stock_id='$id'";
-mysql_query($sql);
-//$rows=mysql_fetch_assoc($result);
-header("location:stock_pharmacist.php");
+
+if(isset($_GET['stock_id']) && is_numeric($_GET['stock_id'])) {
+    $id = $_GET['stock_id'];
+    try {
+        $stmt = $con->prepare("DELETE FROM stock WHERE stock_id = :id");
+        $stmt->execute([':id' => $id]);
+        
+        // Redirect back to where they came from
+        $referer = $_SERVER['HTTP_REFERER'] ?? 'admin_products.php';
+        header("Location: " . $referer);
+        exit();
+    } catch (PDOException $e) {
+        die("Error deleting stock: " . htmlspecialchars($e->getMessage()));
+    }
+} else {
+    header("location:index.php");
+    exit();
+}
 ?>
-
-

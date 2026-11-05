@@ -2,30 +2,21 @@
 session_start();
 include_once('connect_db.php');
 
-// Check if admin is logged in
 if(!isset($_SESSION['username'])){
     header("location:index.php");
     exit();
 }
 
-// Check if ID is provided in the URL
-if(isset($_GET['manager_id']) && !empty($_GET['manager_id'])) {
-    $manager_id = $_GET['manager_id'];
-    
+if(isset($_GET['pharmacist_id']) && is_numeric($_GET['pharmacist_id'])) {
+    $id = $_GET['pharmacist_id'];
     try {
-        // Secure PDO deletion
-        $stmt = $con->prepare("DELETE FROM manager WHERE manager_id = :id");
-        $stmt->execute([':id' => $manager_id]);
-        
-        // Redirect back to the manager list
-        header("location:admin_manager.php?deleted=1");
+        $stmt = $con->prepare("DELETE FROM pharmacist WHERE pharmacist_id = :id");
+        $stmt->execute([':id' => $id]);
+        header("Location: admin_pharmacist.php");
         exit();
     } catch (PDOException $e) {
-        die("Error deleting manager: " . htmlspecialchars($e->getMessage()));
+        die("Error: " . htmlspecialchars($e->getMessage()));
     }
-} else {
-    // If no ID provided, just go back to the list
-    header("location:admin_manager.php");
-    exit();
 }
+header("location:index.php");
 ?>

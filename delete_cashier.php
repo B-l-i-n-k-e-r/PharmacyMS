@@ -2,30 +2,21 @@
 session_start();
 include_once('connect_db.php');
 
-// Check if admin is logged in
 if(!isset($_SESSION['username'])){
     header("location:index.php");
     exit();
 }
 
-// Check if ID is provided in the URL
-if(isset($_GET['cashier_id']) && !empty($_GET['cashier_id'])) {
-    $cashier_id = $_GET['cashier_id'];
-    
+if(isset($_GET['pharmacist_id']) && is_numeric($_GET['pharmacist_id'])) {
+    $id = $_GET['pharmacist_id'];
     try {
-        // Secure PDO deletion
-        $stmt = $con->prepare("DELETE FROM cashier WHERE cashier_id = :id");
-        $stmt->execute([':id' => $cashier_id]);
-        
-        // Redirect back to the cashier list
-        header("location:admin_cashier.php?deleted=1");
+        $stmt = $con->prepare("DELETE FROM pharmacist WHERE pharmacist_id = :id");
+        $stmt->execute([':id' => $id]);
+        header("Location: admin_pharmacist.php");
         exit();
     } catch (PDOException $e) {
-        die("Error deleting cashier: " . htmlspecialchars($e->getMessage()));
+        die("Error: " . htmlspecialchars($e->getMessage()));
     }
-} else {
-    // If no ID provided, just go back to the list
-    header("location:admin_cashier.php");
-    exit();
 }
+header("location:index.php");
 ?>
