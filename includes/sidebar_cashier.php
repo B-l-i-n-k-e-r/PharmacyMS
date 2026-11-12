@@ -12,7 +12,7 @@
       <li><a href="cashier_history.php" class="<?php echo $current_page == 'cashier_history.php' ? 'active' : ''; ?>"><i class="fas fa-history"></i>My Sales History</a></li>
     </ul>
     <div class="sidebar-foot">
-      <a href="logout.php"><i class="fas fa-power-off"></i>Log out</a>
+      <a href="../logout.php"><i class="fas fa-power-off"></i>Log out</a>
     </div>
 </aside>
 <div class="scrim" id="scrim"></div>

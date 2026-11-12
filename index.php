@@ -21,7 +21,7 @@ if (isset($_POST['submit'])) {
                 if (session_status() == PHP_SESSION_NONE) { session_start(); }
                 $_SESSION['admin_id'] = $row[0];
                 $_SESSION['username'] = $row[1];
-                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/admin.php");
+                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/admin/admin.php");
                 exit();
             } else {
                 $message = "Incorrect username or password. Check your details and try again.";
@@ -40,7 +40,7 @@ if (isset($_POST['submit'])) {
                 $_SESSION['last_name']     = $row[2];
                 $_SESSION['staff_id']      = $row[3];
                 $_SESSION['username']      = $row[4];
-                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/pharmacist.php");
+                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/pharmacist/pharmacist.php");
                 exit();
             } else {
                 $message = "Incorrect username or password. Check your details and try again.";
@@ -59,7 +59,7 @@ if (isset($_POST['submit'])) {
                 $_SESSION['last_name']  = $row[2];
                 $_SESSION['staff_id']   = $row[3];
                 $_SESSION['username']   = $row[4];
-                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/cashier.php");
+                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/cashier/cashier.php");
                 exit();
             } else {
                 $message = "Incorrect username or password. Check your details and try again.";
@@ -78,7 +78,7 @@ if (isset($_POST['submit'])) {
                 $_SESSION['last_name']  = $row[2];
                 $_SESSION['staff_id']   = $row[3];
                 $_SESSION['username']   = $row[4];
-                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/manager.php");
+                header("Location: http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/manager/manager.php");
                 exit();
             } else {
                 $message = "Incorrect username or password. Check your details and try again.";

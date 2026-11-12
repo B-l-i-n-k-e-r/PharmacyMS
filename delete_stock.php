@@ -14,7 +14,7 @@ if(isset($_GET['stock_id']) && is_numeric($_GET['stock_id'])) {
         $stmt->execute([':id' => $id]);
         
         // Redirect back to where they came from
-        $referer = $_SERVER['HTTP_REFERER'] ?? 'admin_products.php';
+        $referer = $_SERVER['HTTP_REFERER'] ?? 'index.php';
         header("Location: " . $referer);
         exit();
     } catch (PDOException $e) {

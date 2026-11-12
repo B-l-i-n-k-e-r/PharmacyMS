@@ -9,4 +9,5 @@ unset($_SESSION['last_name']);
 unset($_SESSION['staff_id']);
 unset($_SESSION['username']);
 header("location:http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/index.php");
+exit();
 ?>
