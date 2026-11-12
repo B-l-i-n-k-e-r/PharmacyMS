@@ -6,7 +6,7 @@ if(isset($_SESSION['username'])){
     $id=$_SESSION['admin_id'];
     $username=$_SESSION['username'];
 }else{
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 
@@ -147,9 +147,9 @@ include '../includes/header.php';
               <td><?php echo htmlspecialchars($row['phone']); ?></td>
               <td class="actions">
                 <a class="icon-btn icon-btn--edit" title="Edit" aria-label="Edit <?php echo htmlspecialchars($row['username']); ?>"
-                   href="update_manager.php?username=<?php echo urlencode($row['username']); ?>"><i class="fas fa-edit"></i></a>
+                   href="../update_manager.php?username=<?php echo urlencode($row['username']); ?>"><i class="fas fa-edit"></i></a>
                 <a class="icon-btn icon-btn--delete" title="Delete" aria-label="Delete <?php echo htmlspecialchars($row['username']); ?>"
-                   href="delete_manager.php?manager_id=<?php echo urlencode($row['manager_id']); ?>"
+                   href="../delete_manager.php?manager_id=<?php echo urlencode($row['manager_id']); ?>"
                    onclick="return confirm('Are you sure you want to delete this manager?');"><i class="fas fa-trash"></i></a>
               </td>
             </tr>

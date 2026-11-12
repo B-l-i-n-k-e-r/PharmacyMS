@@ -2,7 +2,7 @@
 session_start();
 include_once('../connect_db.php');
 
-if (empty($_SESSION['username'])) { header('Location: index.php'); exit(); }
+if (empty($_SESSION['username'])) { header('Location: ../index.php'); exit(); }
 $user = $_SESSION['username'];
 
 function safe_h($val) {
@@ -72,7 +72,7 @@ include '../includes/header.php';
           <tbody>
           <?php foreach ($sales as $row): ?>
             <tr>
-              <td><strong>#<?php echo safe_h($row['receiptNo'] ?? $row['id'] ?? 'N/A'); ?></strong></td>
+              <td><strong>#<?php echo safe_h($row['reciptNo'] ?? $row['receiptNo'] ?? $row['id'] ?? 'N/A'); ?></strong></td>
               <td><?php echo safe_h($row['customer_id'] ?? $row['customer_name']); ?></td>
               <td><strong>Ksh <?php echo number_format((float)($row['total'] ?? $row['amount'] ?? 0), 2); ?></strong></td>
               <td><?php echo safe_h($row['payment_method'] ?? $row['payType']); ?></td>

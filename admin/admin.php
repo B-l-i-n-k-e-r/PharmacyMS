@@ -6,7 +6,7 @@ if(isset($_SESSION['username'])){
     $id=$_SESSION['admin_id'];
     $user=$_SESSION['username']; // Using $user for the includes
 }else{
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 

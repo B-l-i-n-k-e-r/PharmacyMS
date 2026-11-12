@@ -3,7 +3,7 @@ session_start();
 include_once('../connect_db.php');
 
 if(!isset($_SESSION['username'])){
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 $user = $_SESSION['username'];
@@ -119,7 +119,7 @@ include '../includes/header.php';
                     </div>
                     <div class="field">
                         <label for="currency_symbol">Currency Symbol</label>
-                        <input name="currency_symbol" id="currency_symbol" type="text" required value="<?php echo htmlspecialchars($settings['currency_symbol'] ?? '$'); ?>">
+                        <input name="currency_symbol" id="currency_symbol" type="text" required value="<?php echo htmlspecialchars($settings['currency_symbol'] ?? 'Ksh'); ?>">
                     </div>
                     <div class="field">
                         <label for="contact_phone">Contact Phone</label>

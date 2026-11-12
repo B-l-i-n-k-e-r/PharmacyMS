@@ -7,7 +7,7 @@ if (isset($_SESSION['username'])) {
     $id   = $_SESSION['pharmacist_id'];
     $user = $_SESSION['username'];
 } else {
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 
@@ -233,7 +233,7 @@ include '../includes/header.php';
               <td><?php echo h(date('M j, Y', strtotime($row['date_supplied']))); ?></td>
               <td class="actions">
                 <a class="icon-btn icon-btn--delete" title="Delete" aria-label="Delete <?php echo h($row['drug_name']); ?>"
-                   href="delete_stock.php?stock_id=<?php echo urlencode($row['stock_id']); ?>"
+                   href="../delete_stock.php?stock_id=<?php echo urlencode($row['stock_id']); ?>"
                    onclick="return confirm('Are you sure you want to delete this medicine?');"><i class="fas fa-trash"></i></a>
               </td>
             </tr>

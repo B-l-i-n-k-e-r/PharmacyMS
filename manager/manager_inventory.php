@@ -2,7 +2,7 @@
 session_start();
 include_once('../connect_db.php');
 
-if (empty($_SESSION['username'])) { header('Location: index.php'); exit(); }
+if (empty($_SESSION['username'])) { header('Location: ../index.php'); exit(); }
 $user = $_SESSION['username'];
 
 try {

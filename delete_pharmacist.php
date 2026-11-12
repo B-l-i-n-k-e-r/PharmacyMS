@@ -12,7 +12,7 @@ if(isset($_GET['pharmacist_id']) && is_numeric($_GET['pharmacist_id'])) {
     try {
         $stmt = $con->prepare("DELETE FROM pharmacist WHERE pharmacist_id = :id");
         $stmt->execute([':id' => $id]);
-        header("Location: admin_pharmacist.php");
+        header("Location: admin/admin_pharmacist.php");
         exit();
     } catch (PDOException $e) {
         die("Error: " . htmlspecialchars($e->getMessage()));

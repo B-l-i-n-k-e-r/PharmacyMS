@@ -21,7 +21,9 @@
       <li><a href="admin_manager.php" class="<?php echo $current_page == 'admin_manager.php' ? 'active' : ''; ?>"><i class="fas fa-user-cog"></i>Managers</a></li>
       <li><a href="admin_cashier.php" class="<?php echo $current_page == 'admin_cashier.php' ? 'active' : ''; ?>"><i class="fas fa-cash-register"></i>Cashiers</a></li>
          
-      <li style="margin-top: 16px; margin-bottom: 4px; padding-left: 12px; font-size: 0.75rem; font-weight: 700; color: #7da39e; text-transform: uppercase; letter-spacing: 0.05em;">Settings</li>
+      <li style="margin-top: 16px; margin-bottom: 4px; padding-left: 12px; font-size: 0.75rem; font-weight: 700; color: #7da39e; text-transform: uppercase; letter-spacing: 0.05em;">Data & Settings</li>
+      <li><a href="admin_localdata.php" class="<?php echo $current_page == 'admin_localdata.php' ? 'active' : ''; ?>"><i class="fas fa-database"></i>Local Data</a></li>
+      <li><a href="admin_globaldata.php" class="<?php echo $current_page == 'admin_globaldata.php' ? 'active' : ''; ?>"><i class="fas fa-server"></i>Global Data</a></li>
       <li><a href="admin_config.php" class="<?php echo $current_page == 'admin_config.php' ? 'active' : ''; ?>"><i class="fas fa-cogs"></i>System Config</a></li>
     </ul>
     

@@ -13,7 +13,8 @@ if(isset($_GET['prescription_id']) && is_numeric($_GET['prescription_id'])) {
         $stmt = $con->prepare("DELETE FROM prescription WHERE prescription_id = :id");
         $stmt->execute([':id' => $id]);
         
-        header("Location: prescription.php");
+        // Redirect back to the pharmacist prescription list
+        header("Location: pharmacist/prescription.php");
         exit();
     } catch (PDOException $e) {
         die("Error deleting prescription: " . htmlspecialchars($e->getMessage()));

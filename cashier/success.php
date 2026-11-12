@@ -1,71 +1,47 @@
 <?php
 session_start();
 include_once('../connect_db.php');
-if(isset($_SESSION['username'])){
-$id=$_SESSION['admin_id'];
-$user=$_SESSION['username'];
-}else{
-header("location:http://".$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/index.php");
-exit();
+
+if (!isset($_SESSION['username'])) {
+    header("location:../index.php");
+    exit();
 }
+
+$user = $_SESSION['username'];
+$fname = $_SESSION['first_name'];
+
+$page_title = "Success - Pharmacy";
+$topbar_title = "Cashier Dashboard";
+
+include '../includes/head.php';
+include '../includes/sidebar_cashier.php';
+include '../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-<title><?php echo $user;?> -Pharmacy Sys</title>
-<link rel="stylesheet" type="text/css" href="style/ms.css">
-<link rel="stylesheet" href="style/s.css" type="text/css" media="screen" /> 
-<link rel="stylesheet" type="text/css" href="style/ds.css"  media="screen" />
-<script src="js/function.js" type="text/javascript"></script>
-<style>
-#left_column{
-height: 497px;
-}
-</style>
-</head>
-<body>
-<div id="content">
-<div id="header">
-<h1>Pharmacy Management System</h1></div>
-<div id="left_column">
-<div id="button">
-<ul>
-			<li><a href="admin.php">Dashboard</a></li>
-			<li><a href="admin_pharmacist.php">Pharmacist</a></li>
-			<li><a href="admin_manager.php">Manager</a></li>
-			<li><a href="admin_cashier.php">Cashier</a></li>
-			<li><a href="logout.php">Logout</a></li>
-		</ul>	
-</div>
-		</div>
-<div id="main">
-<h4 style="color:sienna; margin-left: 200px; font-size:20px;">You have successfully added and entity into the database</h4>
-<!-- Dashboard icons -->
-            <div class="grid_7">
-            	<a href="admin.php" class="dashboard-module">
-                	<img src="images/admin_icon.png" width="75" height="75" alt="edit" />
-                	<span>Dashboard</span>
-                </a>
-                <a href="admin_pharmacist.php" class="dashboard-module">
-                	<img src="images/pharmacist_icon.png"  width="75" height="75" alt="edit" />
-                	<span>Manage Pharmacist</span>
-                </a>
-                
-                <a href="admin_manager.php" class="dashboard-module">
-                	<img src="images/manager_icon.png"  width="75" height="75" alt="edit" />
-                	<span>Manage Manager</span>
-                </a>
-                  
-                <a href="admin_cashier.php" class="dashboard-module">
-                	<img src="images/cashier_icon.jpg" width="75" height="75" alt="edit" />
-                	<span>Manage Cashier</span>
-                </a>				  
-                             
+<main class="main">
+    <div style="display: flex; align-items: center; justify-content: center; min-height: 60vh;">
+        <div class="card" style="max-width: 500px; width: 100%; padding: 48px; text-align: center;">
+            
+            <div style="width: 80px; height: 80px; background: #e6f4ea; color: #1e6b3a; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+                <i class="fas fa-check-circle" style="font-size: 3rem;"></i>
             </div>
 
- </div>
-<div id="footer" align="Center"> </div>
-</div>
-</body>
-</html>
+            <h1 style="margin: 0 0 12px; font-size: 1.8rem;">Success!</h1>
+            <p style="color: var(--ink-soft); margin-bottom: 32px; font-size: 1.1rem;">
+                The action was completed successfully. The database has been updated.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <a href="payment.php" class="btn" style="padding: 14px; font-size: 1.05rem;">
+                    <i class="fas fa-cash-register"></i> Process New Sale
+                </a>
+                <a href="cashier.php" class="btn btn--ghost" style="padding: 14px; font-size: 1.05rem;">
+                    <i class="fas fa-home"></i> Back to Dashboard
+                </a>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<?php include '../includes/footer.php'; ?>

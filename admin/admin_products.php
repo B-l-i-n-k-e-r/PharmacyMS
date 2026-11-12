@@ -3,7 +3,7 @@ session_start();
 include_once('../connect_db.php');
 
 if(!isset($_SESSION['username'])){
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 $user = $_SESSION['username'];
@@ -110,6 +110,7 @@ include '../includes/header.php';
               <th>Supplier</th>
               <th>Unit Cost</th>
               <th>Status</th>
+              <th class="actions">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -127,6 +128,12 @@ include '../includes/header.php';
                 <?php else: ?>
                     <span style="color: var(--danger); font-weight: 600;">Out of Stock</span>
                 <?php endif; ?>
+              </td>
+              <td class="actions">
+                <!-- EDIT BUTTON -->
+                <a class="icon-btn icon-btn--edit" title="Edit" href="edit_product.php?id=<?php echo urlencode($row['stock_id']); ?>"><i class="fas fa-edit"></i></a>
+                <!-- DELETE BUTTON -->
+                <a class="icon-btn icon-btn--delete" title="Delete" href="../delete_stock.php?stock_id=<?php echo urlencode($row['stock_id']); ?>" onclick="return confirm('Are you sure you want to delete this product?');"><i class="fas fa-trash"></i></a>
               </td>
             </tr>
           <?php endforeach; ?>

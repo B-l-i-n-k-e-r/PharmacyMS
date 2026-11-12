@@ -3,7 +3,7 @@ session_start();
 include_once('../connect_db.php');
 
 if (!isset($_SESSION['username'])) {
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 $user  = $_SESSION['username'];

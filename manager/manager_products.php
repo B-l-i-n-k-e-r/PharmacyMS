@@ -2,7 +2,7 @@
 session_start();
 include_once('../connect_db.php');
 
-if (empty($_SESSION['username'])) { header('Location: index.php'); exit(); }
+if (empty($_SESSION['username'])) { header('Location: ../index.php'); exit(); }
 $user = $_SESSION['username'];
 $message1 = '';
 
@@ -78,7 +78,7 @@ include '../includes/header.php';
               <td><?php echo htmlspecialchars($row['company']); ?></td>
               <td>Ksh <?php echo number_format($row['cost'], 2); ?></td>
               <td class="actions">
-                 <a class="icon-btn icon-btn--delete" href="delete_stock.php?stock_id=<?php echo urlencode($row['stock_id']); ?>" onclick="return confirm('Delete this product?');"><i class="fas fa-trash"></i></a>
+                 <a class="icon-btn icon-btn--delete" href="../delete_stock.php?stock_id=<?php echo urlencode($row['stock_id']); ?>" onclick="return confirm('Delete this product?');"><i class="fas fa-trash"></i></a>
               </td>
             </tr>
           <?php endforeach; ?>

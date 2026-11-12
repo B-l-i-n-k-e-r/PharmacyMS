@@ -11,7 +11,7 @@ if (isset($_SESSION['username'])) {
     $sid   = $_SESSION['staff_id'];
     $user  = $_SESSION['username'];
 } else {
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 

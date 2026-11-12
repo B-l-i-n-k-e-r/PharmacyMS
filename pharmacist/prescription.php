@@ -8,7 +8,7 @@ if (isset($_SESSION['username'])) {
     $fname = $_SESSION['first_name'];
     $user  = $_SESSION['username'];
 } else {
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 
@@ -190,7 +190,7 @@ include '../includes/header.php';
               </td>
               <td class="actions">
                 <a class="icon-btn icon-btn--delete" title="Delete" aria-label="Delete prescription <?php echo h($row['prescription_id']); ?>"
-                   href="delete_prescription.php?prescription_id=<?php echo urlencode($row['prescription_id']); ?>"
+                   href="../delete_prescription.php?prescription_id=<?php echo urlencode($row['prescription_id']); ?>"
                    onclick="return confirm('Are you sure you want to delete this prescription?');"><i class="fas fa-trash"></i></a>
               </td>
             </tr>

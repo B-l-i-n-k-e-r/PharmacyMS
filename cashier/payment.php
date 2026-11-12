@@ -7,7 +7,7 @@ if (isset($_SESSION['username'])) {
     $fname      = $_SESSION['first_name'];
     $user       = $_SESSION['username'];
 } else {
-    header("location:index.php");
+    header("location:../index.php");
     exit();
 }
 
